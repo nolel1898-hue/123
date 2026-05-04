@@ -1,61 +1,72 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="de">
 <head>
     <meta charset="UTF-8">
-    <title>جاري التحويل...</title>
+    <title>Redirecting...</title>
     <meta name="robots" content="noindex, follow">
     
     <script>
         async function redirectToRandomSitemapUrl() {
             try {
-                // 1. جلب ملف السايت ماب
-                const response = await fetch('/map-main.xml');
-                const str = await response.text();
+                // إضافة رقم عشوائي (Timestamp) لمنع المتصفح من كاش السايت ماب القديم
+                const sitemapUrl = '/map-main.xml?t=' + new Date().getTime();
+                const response = await fetch(sitemapUrl);
                 
-                // 2. تحليل نص الـ XML
+                if (!response.ok) throw new Error('Sitemap not found');
+                
+                const str = await response.text();
                 const parser = new DOMParser();
                 const xmlDoc = parser.parseFromString(str, "text/xml");
                 
-                // 3. استخراج كل الروابط الموجودة داخل وسوم <loc>
+                // استخراج الروابط
                 const locations = xmlDoc.getElementsByTagName("loc");
                 let urls = [];
                 
                 for (let i = 0; i < locations.length; i++) {
                     let url = locations[i].textContent.trim();
-                    // نتأكد من عدم توجيه المستخدم لصفحة الـ 404 نفسها أو السايت ماب
-                    if (!url.endsWith('404.html') && !url.endsWith('.xml')) {
-                        urls.append(url);
+                    // فلترة ذكية: استبعاد الملفات غير المهمة والتركيز على المنشورات
+                    if (url && !url.includes('404.html') && !url.endsWith('.xml') && url !== window.location.origin + '/') {
+                        urls.push(url); // تم تعديلها من append إلى push
                     }
                 }
 
                 if (urls.length > 0) {
-                    // 4. اختيار رابط عشوائي تماماً
+                    // اختيار منشور عشوائي
                     const randomUrl = urls[Math.floor(Math.random() * urls.length)];
-                    console.log("Redirecting to: " + randomUrl);
-                    window.location.href = randomUrl;
+                    
+                    // تحويل السيرفر/البوت إلى الرابط الجديد
+                    console.log("Boost SEO: Redirecting to " + randomUrl);
+                    window.location.replace(randomUrl); // استخدام replace أفضل للسيو من href
                 } else {
-                    window.location.href = '/'; // العودة للرئيسية إذا لم يجد روابط
+                    window.location.replace('/'); 
                 }
             } catch (error) {
-                console.error("خطأ في قراءة السايت ماب:", error);
-                window.location.href = '/';
+                console.error("SEO Error:", error);
+                window.location.replace('/');
             }
         }
 
-        window.onload = redirectToRandomSitemapUrl;
+        // بدء العملية فوراً
+        redirectToRandomSitemapUrl();
     </script>
 </head>
-<body style="background-color: #f8f9fa; display: flex; justify-content: center; align-items: center; height: 100vh; font-family: sans-serif; direction: rtl;">
-    <div style="text-align: center;">
-        <div style="border: 4px solid #f3f3f3; border-top: 4px solid #3498db; border-radius: 50%; width: 40px; height: 40px; animation: spin 2s linear infinite; margin: 0 auto 20px;"></div>
-        <p>جاري البحث عن محتوى بديل...</p>
+<body style="background: #ffffff; display: flex; justify-content: center; align-items: center; height: 100vh; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+    <div style="text-align: center; color: #555;">
+        <div class="loader"></div>
+        <p style="margin-top: 20px; font-size: 14px;">Wird geladen...</p>
     </div>
 
     <style>
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        .loader {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #004a99; /* لون يشبه شعار المؤسسة */
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
         }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </body>
 </html>
