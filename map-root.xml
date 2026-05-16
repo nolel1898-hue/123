@@ -5,4 +5,9 @@
     <loc>https://mail-template.apps.hausdesstiftens.org/map-main.xml</loc>
     <lastmod>2026-05-16</lastmod>
   </sitemap>
+
+  <sitemap>
+    <loc>https://mail-template.apps.hausdesstiftens.org/map-pages.xml</loc>
+    <lastmod>2026-05-16</lastmod>
+  </sitemap>
 </sitemapindex>
